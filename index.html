@@ -143,7 +143,7 @@
 <body>
 
 <header>
-  <h1>エアコンクリーニング さわやか</h1>
+  <h1>エアコンクリーニングさわやか</h1>
   <p>Web ご予約フォーム</p>
 </header>
 
@@ -178,24 +178,35 @@
       </div>
 
       <div class="field">
-        <label class="title" for="area">エリア<span class="req">必須</span></label>
+        <label class="title" for="area">都道府県<span class="req">必須</span></label>
         <select id="area" name="area" required>
           <option value="">選択してください</option>
-          <option>久喜市</option>
-          <option>加須市</option>
-          <option>幸手市</option>
-          <option>白岡市</option>
-          <option>蓮田市</option>
-          <option>杉戸町</option>
-          <option>宮代町</option>
-          <option>その他（ご相談）</option>
+          <option>東京都</option>
+          <option>千葉県</option>
+          <option>埼玉県</option>
+          <option>神奈川県</option>
+          <option>群馬県</option>
+          <option>茨城県</option>
+          <option>愛知県</option>
+          <option>三重県</option>
+          <option>静岡県</option>
+          <option>岐阜県</option>
+          <option>滋賀県</option>
+          <option>大阪府</option>
+          <option>兵庫県</option>
+          <option>和歌山県</option>
+          <option>福岡県</option>
+          <option>熊本県</option>
+          <option>宮崎県</option>
+          <option>その他の地域（ご相談）</option>
         </select>
-        <div class="error-msg">エリアを選択してください</div>
+        <div class="hint">エリア外の方もお気軽にご相談ください</div>
+        <div class="error-msg">都道府県を選択してください</div>
       </div>
 
       <div class="field">
         <label class="title" for="address">ご住所<span class="req">必須</span></label>
-        <input type="text" id="address" name="address" autocomplete="street-address" placeholder="例）久喜市○○1-2-3 ○○マンション101" required>
+        <input type="text" id="address" name="address" autocomplete="street-address" placeholder="例）久喜市○○1-2-3 ○○マンション101（市区町村から）" required>
         <div class="error-msg">ご住所を入力してください</div>
       </div>
 
@@ -212,7 +223,7 @@
 
     <fieldset>
       <legend>ご希望日時</legend>
-      <div class="hint" style="margin-bottom:6px">第3希望まで入力いただくと、日程が決まりやすくなります。</div>
+      <div class="hint" style="margin-bottom:6px">ご予約は3日以上先の日程でお願いします。候補日はなるべくずらして、第3希望まで入力いただくと日程が決まりやすくなります。</div>
 
       <div class="field" data-wish="1">
         <div class="wish-label">第1希望<span class="req">必須</span></div>
@@ -258,7 +269,7 @@
       <div class="total">
         <span>概算金額（税込）</span>
         <strong id="totalPrice">0円</strong>
-        <small>※現地でエアコンの状態を確認のうえ、作業前に正式なお見積りをご説明します。</small>
+        <small>※現地でエアコンの状態を確認のうえ、作業前に正式なお見積りをご説明します。対応地域の出張費は無料です。床からエアコン底面までが2.5m以上の場合は＋3,000円かかります。</small>
       </div>
 
       <div class="field">
@@ -279,6 +290,7 @@
           <label class="choice"><input type="radio" name="parking" value="なし（近隣コインパーキング）"> なし（近隣コインパーキング）</label>
           <label class="choice"><input type="radio" name="parking" value="わからない"> わからない</label>
         </div>
+        <div class="hint">駐車場代はお客様のご負担となります</div>
         <div class="error-msg">駐車場の有無を選択してください</div>
       </div>
 
@@ -306,7 +318,7 @@
   </div>
 </main>
 
-<footer>&copy; エアコンクリーニング さわやか</footer>
+<footer>&copy; エアコンクリーニングさわやか</footer>
 
 <script>
 /* =========================================================
@@ -319,16 +331,19 @@ const GAS_URL = "";
 // 時間帯の選択肢
 const TIME_SLOTS = ["午前（9:00〜12:00）", "午後（12:00〜15:00）", "夕方（15:00〜18:00）", "どの時間帯でも可"];
 
-// メニューと料金（税込・円）  ※金額は仮です。実際の料金に書き換えてください
+// メニューと料金（税込・円）  ※ホームページ（clean-sawayaka.com）の料金表より
 const MENU = [
-  { id: "wall",     name: "壁掛けエアコン（通常タイプ）",      price: 9900,  max: 10 },
-  { id: "auto",     name: "壁掛けエアコン（お掃除機能付き）",  price: 18700, max: 10 },
-  { id: "outdoor",  name: "室外機クリーニング（オプション）",  price: 5500,  max: 10 },
-  { id: "antimold", name: "防カビ抗菌コート（オプション）",    price: 1650,  max: 10 }
+  { id: "wall",     name: "エアコンクリーニング（通常タイプ）",      price: 5980,  max: 10 },
+  { id: "auto",     name: "エアコンクリーニング（お掃除機能付き）",  price: 9980,  max: 10 },
+  { id: "ceil1",    name: "天井埋め込みタイプ（1方向）",             price: 15000, max: 10 },
+  { id: "ceil4",    name: "天井埋め込みタイプ（4方向）",             price: 16000, max: 10 },
+  { id: "antimold", name: "防カビ抗菌コート（オプション）",          price: 3000,  max: 10 },
+  { id: "outdoor",  name: "室外機クリーニング（オプション）",        price: 5000,  max: 10 },
+  { id: "drain",    name: "ドレンホース洗浄（オプション）",          price: 2500,  max: 10 }
 ];
 
 // 予約を受け付ける最短日（今日から何日後以降か）
-const MIN_DAYS_AHEAD = 2;
+const MIN_DAYS_AHEAD = 3;
 
 /* ========================================================= */
 
