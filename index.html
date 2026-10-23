@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>エアコンクリーニングさわやか ご予約フォーム</title>
+<meta name="description" content="エアコンクリーニングさわやかのWeb予約フォームです。ご希望日を第3希望までお選びください。">
+<style>
+  :root {
+    --bg: #f4f9fb;
+    --card: #ffffff;
+    --text: #1f2d33;
+    --muted: #5d6f77;
+    --line: #d6e3e8;
+    --accent: #1b8fb3;
+    --accent-dark: #146f8c;
+    --accent-soft: #e3f3f8;
+    --error: #c0392b;
+    --ok: #2e8b57;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  header {
+    background: linear-gradient(135deg, #1b8fb3, #47b8d6);
+    color: #fff;
+    padding: 28px 16px 24px;
+    text-align: center;
+  }
+  header h1 { margin: 0; font-size: 1.45rem; letter-spacing: .04em; }
+  header p { margin: 6px 0 0; font-size: .92rem; opacity: .95; }
+  main { max-width: 680px; margin: 0 auto; padding: 20px 16px 48px; }
+  .intro {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    font-size: .93rem;
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+  .intro strong { color: var(--text); }
+  fieldset {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 18px 8px;
+    margin: 0 0 18px;
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 0 6px;
+    color: var(--accent-dark);
+  }
+  .field { margin-bottom: 16px; }
+  label.title { display: block; font-weight: 600; margin-bottom: 6px; font-size: .95rem; }
+  .req, .opt {
+    display: inline-block;
+    font-size: .72rem;
+    border-radius: 4px;
+    padding: 0 6px;
+    margin-left: 6px;
+    vertical-align: 2px;
+    font-weight: 600;
+  }
+  .req { background: var(--error); color: #fff; }
+  .opt { background: #e5ebee; color: var(--muted); }
+  input[type=text], input[type=tel], input[type=email], input[type=date], select, textarea {
+    width: 100%;
+    font: inherit;
+    padding: 11px 12px;
+    border: 1px solid #b9cbd2;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text);
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .hint { font-size: .82rem; color: var(--muted); margin-top: 4px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .choice {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid #b9cbd2; border-radius: 8px;
+    padding: 8px 12px; cursor: pointer; background: #fff; font-size: .95rem;
+  }
+  .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .wish { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .wish-label { font-size: .88rem; font-weight: 600; margin: 10px 0 4px; }
+  .menu-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .menu-row:last-child { border-bottom: none; }
+  .menu-name { font-weight: 600; font-size: .95rem; }
+  .menu-price { font-size: .82rem; color: var(--muted); }
+  .menu-row select { width: 88px; }
+  .total {
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 10px 0 14px;
+    display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px;
+  }
+  .total strong { font-size: 1.35rem; color: var(--accent-dark); }
+  .total small { width: 100%; color: var(--muted); font-size: .8rem; }
+  .agree { font-size: .9rem; margin: 6px 0 18px; }
+  button[type=submit] {
+    width: 100%;
+    font: inherit; font-weight: 700; font-size: 1.08rem;
+    color: #fff; background: var(--accent);
+    border: none; border-radius: 10px;
+    padding: 15px; cursor: pointer;
+  }
+  button[type=submit]:hover { background: var(--accent-dark); }
+  button[type=submit]:disabled { background: #9bbfcb; cursor: wait; }
+  .error-msg { color: var(--error); font-size: .85rem; margin-top: 4px; display: none; }
+  .field.invalid .error-msg { display: block; }
+  .field.invalid input, .field.invalid select { border-color: var(--error); }
+  .notice { border-radius: 10px; padding: 14px 16px; margin-top: 16px; display: none; font-size: .95rem; }
+  .notice.show { display: block; }
+  .notice.ok { background: #e8f6ee; border: 1px solid #a9d9bd; color: #1d5e3a; }
+  .notice.ng { background: #fdecea; border: 1px solid #f1b3ab; color: #8a2a1f; }
+  .done { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 32px 20px; display: none; }
+  .done h2 { color: var(--accent-dark); margin-top: 0; }
+  footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 0 16px 28px; }
+  @media (max-width: 480px) {
+    .wish { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>エアコンクリーニング さわやか</h1>
+  <p>Web ご予約フォーム</p>
+</header>
+
+<main>
+  <div class="intro">
+    小さなお子さまのアレルギーなど、ご家族の不安に<strong>誠実に応えるクリーニング</strong>を心がけています。<br>
+    フォーム送信後、担当者より<strong>日程確定のご連絡</strong>を差し上げます。この時点ではまだ予約は確定していませんので、ご連絡をお待ちください。
+  </div>
+
+  <form id="bookingForm" novalidate>
+
+    <fieldset>
+      <legend>お客様情報</legend>
+
+      <div class="field">
+        <label class="title" for="name">お名前<span class="req">必須</span></label>
+        <input type="text" id="name" name="name" autocomplete="name" placeholder="例）山田 花子" required>
+        <div class="error-msg">お名前を入力してください</div>
+      </div>
+
+      <div class="field">
+        <label class="title" for="tel">電話番号<span class="req">必須</span></label>
+        <input type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="例）090-1234-5678" required pattern="[0-9０-９\-－ー ]{10,15}">
+        <div class="hint">日程確定のご連絡に使用します</div>
+        <div class="error-msg">電話番号を正しく入力してください</div>
+      </div>
+
+      <div class="field">
+        <label class="title" for="email">メールアドレス<span class="opt">任意</span></label>
+        <input type="email" id="email" name="email" autocomplete="email" placeholder="例）hanako@example.com">
+        <div class="error-msg">メールアドレスの形式が正しくありません</div>
+      </div>
+
+      <div class="field">
+        <label class="title" for="area">エリア<span class="req">必須</span></label>
+        <select id="area" name="area" required>
+          <option value="">選択してください</option>
+          <option>久喜市</option>
+          <option>加須市</option>
+          <option>幸手市</option>
+          <option>白岡市</option>
+          <option>蓮田市</option>
+          <option>杉戸町</option>
+          <option>宮代町</option>
+          <option>その他（ご相談）</option>
+        </select>
+        <div class="error-msg">エリアを選択してください</div>
+      </div>
+
+      <div class="field">
+        <label class="title" for="address">ご住所<span class="req">必須</span></label>
+        <input type="text" id="address" name="address" autocomplete="street-address" placeholder="例）久喜市○○1-2-3 ○○マンション101" required>
+        <div class="error-msg">ご住所を入力してください</div>
+      </div>
+
+      <div class="field">
+        <label class="title">お住まいのタイプ<span class="req">必須</span></label>
+        <div class="choices" data-group="housing">
+          <label class="choice"><input type="radio" name="housing" value="戸建て" required> 戸建て</label>
+          <label class="choice"><input type="radio" name="housing" value="マンション・アパート"> マンション・アパート</label>
+          <label class="choice"><input type="radio" name="housing" value="店舗・事務所"> 店舗・事務所</label>
+        </div>
+        <div class="error-msg">お住まいのタイプを選択してください</div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>ご希望日時</legend>
+      <div class="hint" style="margin-bottom:6px">第3希望まで入力いただくと、日程が決まりやすくなります。</div>
+
+      <div class="field" data-wish="1">
+        <div class="wish-label">第1希望<span class="req">必須</span></div>
+        <div class="wish">
+          <input type="date" name="date1" aria-label="第1希望日" required>
+          <select name="time1" aria-label="第1希望時間帯" required>
+            <option value="">時間帯を選択</option>
+          </select>
+        </div>
+        <div class="error-msg">第1希望の日付と時間帯を選択してください</div>
+      </div>
+
+      <div class="field" data-wish="2">
+        <div class="wish-label">第2希望<span class="opt">任意</span></div>
+        <div class="wish">
+          <input type="date" name="date2" aria-label="第2希望日">
+          <select name="time2" aria-label="第2希望時間帯">
+            <option value="">時間帯を選択</option>
+          </select>
+        </div>
+        <div class="error-msg">日付と時間帯を両方選択してください</div>
+      </div>
+
+      <div class="field" data-wish="3">
+        <div class="wish-label">第3希望<span class="opt">任意</span></div>
+        <div class="wish">
+          <input type="date" name="date3" aria-label="第3希望日">
+          <select name="time3" aria-label="第3希望時間帯">
+            <option value="">時間帯を選択</option>
+          </select>
+        </div>
+        <div class="error-msg">日付と時間帯を両方選択してください</div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>ご依頼内容</legend>
+      <div class="field" id="menuField">
+        <div id="menuList"></div>
+        <div class="error-msg">エアコンの台数を1台以上選択してください</div>
+      </div>
+
+      <div class="total">
+        <span>概算金額（税込）</span>
+        <strong id="totalPrice">0円</strong>
+        <small>※現地でエアコンの状態を確認のうえ、作業前に正式なお見積りをご説明します。</small>
+      </div>
+
+      <div class="field">
+        <label class="title">お支払い方法<span class="req">必須</span></label>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="payment" value="現金" required> 現金</label>
+          <label class="choice"><input type="radio" name="payment" value="銀行振込"> 銀行振込</label>
+          <label class="choice"><input type="radio" name="payment" value="クレジットカード"> クレジットカード</label>
+          <label class="choice"><input type="radio" name="payment" value="QRコード決済"> QRコード決済</label>
+        </div>
+        <div class="error-msg">お支払い方法を選択してください</div>
+      </div>
+
+      <div class="field">
+        <label class="title">駐車場<span class="req">必須</span></label>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="parking" value="あり（敷地内）" required> あり（敷地内）</label>
+          <label class="choice"><input type="radio" name="parking" value="なし（近隣コインパーキング）"> なし（近隣コインパーキング）</label>
+          <label class="choice"><input type="radio" name="parking" value="わからない"> わからない</label>
+        </div>
+        <div class="error-msg">駐車場の有無を選択してください</div>
+      </div>
+
+      <div class="field">
+        <label class="title" for="note">備考・ご相談<span class="opt">任意</span></label>
+        <textarea id="note" name="note" placeholder="例）子どもにアレルギーがあるので、洗剤について相談したい／エアコンのメーカーは○○ など"></textarea>
+      </div>
+    </fieldset>
+
+    <div class="field agree">
+      <label class="choice" style="display:inline-flex"><input type="checkbox" id="agree" required> 入力内容は日程調整とご連絡のためにのみ使用することに同意します</label>
+      <div class="error-msg">同意にチェックを入れてください</div>
+    </div>
+
+    <!-- bot対策（人には見えない欄） -->
+    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+    <button type="submit" id="submitBtn">この内容で予約を申し込む</button>
+    <div id="notice" class="notice" role="alert"></div>
+  </form>
+
+  <div id="done" class="done">
+    <h2>お申し込みありがとうございました</h2>
+    <p>内容を確認のうえ、担当者より日程確定のご連絡を差し上げます。<br>今しばらくお待ちください。</p>
+  </div>
+</main>
+
+<footer>&copy; エアコンクリーニング さわやか</footer>
+
+<script>
+/* =========================================================
+   設定（ここだけ書き換えればOK）
+   ========================================================= */
+
+// Google Apps Script の「ウェブアプリURL」（https://script.google.com/macros/s/.../exec）
+const GAS_URL = "";
+
+// 時間帯の選択肢
+const TIME_SLOTS = ["午前（9:00〜12:00）", "午後（12:00〜15:00）", "夕方（15:00〜18:00）", "どの時間帯でも可"];
+
+// メニューと料金（税込・円）  ※金額は仮です。実際の料金に書き換えてください
+const MENU = [
+  { id: "wall",     name: "壁掛けエアコン（通常タイプ）",      price: 9900,  max: 10 },
+  { id: "auto",     name: "壁掛けエアコン（お掃除機能付き）",  price: 18700, max: 10 },
+  { id: "outdoor",  name: "室外機クリーニング（オプション）",  price: 5500,  max: 10 },
+  { id: "antimold", name: "防カビ抗菌コート（オプション）",    price: 1650,  max: 10 }
+];
+
+// 予約を受け付ける最短日（今日から何日後以降か）
+const MIN_DAYS_AHEAD = 2;
+
+/* ========================================================= */
+
+const form = document.getElementById("bookingForm");
+const yen = n => n.toLocaleString("ja-JP") + "円";
+
+// 時間帯セレクトを作る
+document.querySelectorAll('select[name^="time"]').forEach(sel => {
+  TIME_SLOTS.forEach(t => sel.add(new Option(t, t)));
+});
+
+// 日付の最小・最大
+(function setDateRange() {
+  const pad = n => String(n).padStart(2, "0");
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const min = new Date(); min.setDate(min.getDate() + MIN_DAYS_AHEAD);
+  const max = new Date(); max.setMonth(max.getMonth() + 3);
+  document.querySelectorAll('input[type=date]').forEach(i => { i.min = fmt(min); i.max = fmt(max); });
+})();
+
+// メニュー表示
+const menuList = document.getElementById("menuList");
+MENU.forEach(m => {
+  const row = document.createElement("div");
+  row.className = "menu-row";
+  const opts = Array.from({ length: m.max + 1 }, (_, i) => `<option value="${i}">${i}台</option>`).join("");
+  row.innerHTML = `
+    <div><div class="menu-name">${m.name}</div><div class="menu-price">1台 ${yen(m.price)}</div></div>
+    <select data-menu="${m.id}" aria-label="${m.name}の台数">${opts}</select>`;
+  menuList.appendChild(row);
+});
+
+function calc() {
+  let total = 0;
+  const items = [];
+  MENU.forEach(m => {
+    const qty = Number(document.querySelector(`[data-menu="${m.id}"]`).value);
+    if (qty > 0) { total += m.price * qty; items.push(`${m.name}×${qty}`); }
+  });
+  document.getElementById("totalPrice").textContent = yen(total);
+  return { total, items };
+}
+menuList.addEventListener("change", calc);
+
+// 入力チェック
+function setInvalid(field, bad) { field.classList.toggle("invalid", bad); return !bad; }
+
+function validate() {
+  let ok = true;
+  const v = n => (form.elements[n].value || "").trim();
+
+  ok &= setInvalid(form.elements.name.closest(".field"), !v("name"));
+  const tel = v("tel").replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[^0-9]/g, "");
+  ok &= setInvalid(form.elements.tel.closest(".field"), tel.length < 10 || tel.length > 11);
+  const email = v("email");
+  ok &= setInvalid(form.elements.email.closest(".field"), email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+  ok &= setInvalid(form.elements.area.closest(".field"), !v("area"));
+  ok &= setInvalid(form.elements.address.closest(".field"), !v("address"));
+  ["housing", "payment", "parking"].forEach(n => {
+    const f = form.querySelector(`input[name="${n}"]`).closest(".field");
+    ok &= setInvalid(f, !form.querySelector(`input[name="${n}"]:checked`));
+  });
+
+  [1, 2, 3].forEach(i => {
+    const d = v("date" + i), t = v("time" + i);
+    const f = form.querySelector(`[data-wish="${i}"]`);
+    const bad = i === 1 ? (!d || !t) : (!!d !== !!t);
+    ok &= setInvalid(f, bad);
+  });
+
+  ok &= setInvalid(document.getElementById("menuField"), calc().items.length === 0);
+  ok &= setInvalid(document.getElementById("agree").closest(".field"), !document.getElementById("agree").checked);
+  return !!ok;
+}
+
+function showNotice(type, text) {
+  const n = document.getElementById("notice");
+  n.className = `notice show ${type}`;
+  n.textContent = text;
+}
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!validate()) {
+    showNotice("ng", "未入力または正しくない項目があります。赤字の箇所をご確認ください。");
+    const first = form.querySelector(".field.invalid");
+    if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+  if (form.elements.website.value) return; // bot
+
+  if (!GAS_URL) {
+    showNotice("ng", "現在フォームの準備中です。恐れ入りますが、しばらくしてから再度お試しください。");
+    return;
+  }
+
+  const { total, items } = calc();
+  const fmtDate = s => s ? s.replace(/-/g, "/") : "";
+  const data = new URLSearchParams({
+    name: form.elements.name.value.trim(),
+    tel: form.elements.tel.value.trim(),
+    email: form.elements.email.value.trim(),
+    area: form.elements.area.value,
+    address: form.elements.address.value.trim(),
+    housing: form.querySelector('input[name="housing"]:checked').value,
+    date1: fmtDate(form.elements.date1.value), time1: form.elements.time1.value,
+    date2: fmtDate(form.elements.date2.value), time2: form.elements.time2.value,
+    date3: fmtDate(form.elements.date3.value), time3: form.elements.time3.value,
+    payment: form.querySelector('input[name="payment"]:checked').value,
+    parking: form.querySelector('input[name="parking"]:checked').value,
+    items: items.join("、"),
+    total: String(total),
+    note: form.elements.note.value.trim()
+  });
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "送信中…";
+  try {
+    await fetch(GAS_URL, { method: "POST", mode: "no-cors", body: data });
+    form.style.display = "none";
+    document.getElementById("done").style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    showNotice("ng", "送信できませんでした。通信環境をご確認のうえ、もう一度お試しください。");
+    btn.disabled = false;
+    btn.textContent = "この内容で予約を申し込む";
+  }
+});
+
+// 入力し直したらエラー表示を消す
+form.addEventListener("input", e => {
+  const f = e.target.closest(".field");
+  if (f && f.classList.contains("invalid")) f.classList.remove("invalid");
+});
+form.addEventListener("change", e => {
+  const f = e.target.closest(".field");
+  if (f && f.classList.contains("invalid")) f.classList.remove("invalid");
+});
+</script>
+</body>
+</html>
